@@ -1,0 +1,14 @@
+# Ignore
+.DS_Store
+node_modules
+dist
+coverage
+*.log
+
+# Ignore environment files
+.history
+
+# Ignore tmp files
+*.tmp
+*.bak
+*.swp
