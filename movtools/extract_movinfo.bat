@@ -1,8 +1,29 @@
 @echo off
 setlocal enabledelayedexpansion
 
+REM Ensure OEM code page for Chinese display
+chcp 936>nul 2>nul
+
 REM Paths (script directory)
 set "SDIR=%~dp0"
+
+rem Accept optional root folder as first arg (mimics extract_mov_folder_info.bat)
+if "%~1"=="" (
+  set "ROOT=%cd%"
+) else (
+  set "ROOT=%~1"
+)
+
+:: Validate root folder
+if not exist "%ROOT%\" (
+  echo Error: invalid folder path: %ROOT%
+  pause
+  exit /b 1
+)
+
+:: remove last slash if exists
+if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
+echo Root folder: %ROOT%
 set "FOLDCSV=%SDIR%extract_mov_folder_info.csv"
 set "FOLDSUM=%SDIR%extract_mov_folder_info_summary.csv"
 set "MEDCSV=%SDIR%MediaLibnew.csv"
@@ -12,17 +33,20 @@ set "SUM=%SDIR%extract_movinfo_summary.csv"
 REM Validate input files
 if not exist "%FOLDCSV%" (
   echo Error: %FOLDCSV% not found
+  pause
   exit /b 1
 )
 REM FOLDCSV is required for folder scanning results.
 if not exist "%FOLDSUM%" (
   echo Error: %FOLDSUM% not found
+  pause
   exit /b 1
 )
 
 REM MediaLibnew.csv is optional, but if it exists, it must be valid for extraction
 if not exist "%MEDCSV%" (
   echo Error: %MEDCSV% not found
+  pause
   exit /b 1
 )
 

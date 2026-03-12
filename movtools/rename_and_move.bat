@@ -7,20 +7,39 @@ REM 2) read extract_mov_folder_info.csv (folder,file)
 REM 3) for each folder, map numeric id -> title+country, create target folder
 REM 4) move files to target folder and rename to Title+Country.ext
 
+chcp 936>nul 2>nul
+
 set "SDIR=%~dp0"
 set "MEDCSV=%SDIR%extract_movinfo.csv"
 set "FOLDCSV=%SDIR%extract_mov_folder_info.csv"
 set "MAPFILE=%SDIR%map_id_name.tmp"
 
-set "ROOT=%~1"
-if "%ROOT%"=="" set "ROOT=%cd%"
+rem Accept optional root folder as first arg (mimics extract_mov_folder_info.bat)
+if "%~1"=="" (
+  set "ROOT=%cd%"
+) else (
+  set "ROOT=%~1"
+)
+
+:: Validate root folder
+if not exist "%ROOT%\" (
+  echo Error: invalid folder path: %ROOT%
+  pause
+  exit /b 1
+)
+
+:: remove last slash if exists
+if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
+echo Root folder: %ROOT%
 
 if not exist "%MEDCSV%" (
   echo Error: %MEDCSV% not found
+  pause
   exit /b 1
 )
 if not exist "%FOLDCSV%" (
   echo Error: %FOLDCSV% not found
+  pause
   exit /b 1
 )
 
