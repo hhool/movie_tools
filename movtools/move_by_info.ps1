@@ -39,9 +39,22 @@ foreach ($ln in $lines) {
     continue
   }
   $r = $medIndex[$nid]
-  $title = $r.c3
-  $country = $r.c15
-  $basename = ($title + '+' + $country).Trim()
+  $titleZh = ($r.c3 -as [string]).Trim()
+  $titleEn = ($r.c11 -as [string]).Trim()
+  $country = ($r.c15 -as [string]).Trim()
+  $release = ($r.c12 -as [string]).Trim()
+  $year = ''
+  if ($release -match '^(\d{4})') { $year = $Matches[1] }
+
+  $parts = @()
+  if ($titleZh -ne '') { $parts += $titleZh }
+  if ($titleEn -ne '') { $parts += $titleEn }
+  if ($country -ne '') { $parts += $country }
+  if ($year -ne '') { $parts += $year }
+
+  if ($parts.Count -eq 0) { Write-Host "Warning: empty basename for id $nid (folder $folder)"; continue }
+
+  $basename = ($parts -join '-')
   $basename = $basename -replace '[\\/:*?"<>|]', '_' # sanitize
   if ($basename -eq '') { Write-Host "Warning: empty basename for id $nid (folder $folder)"; continue }
 

@@ -18,9 +18,23 @@ foreach ($r in $rows) {
   if (-not $r.c1) { continue }
   $id = $r.c1.Trim()
   if ($id -eq '') { continue }
-  $title = ($r.c3 -as [string]).Trim()
+  $titleZh = ($r.c3 -as [string]).Trim()
+  $titleEn = ($r.c11 -as [string]).Trim()
   $country = ($r.c15 -as [string]).Trim()
-  $name = "$title+$country"
+  $release = ($r.c12 -as [string]).Trim()
+  # extract year from release date like 2001-05-18
+  $year = ''
+  if ($release -match '^(\d{4})') { $year = $Matches[1] }
+
+  $parts = @()
+  if ($titleZh -ne '') { $parts += $titleZh }
+  if ($titleEn -ne '') { $parts += $titleEn }
+  if ($country -ne '') { $parts += $country }
+  if ($year -ne '') { $parts += $year }
+
+  if ($parts.Count -eq 0) { continue }
+
+  $name = ($parts -join '-')
   $name = $name -replace '[\\/:*?"<>|]', '_'
   $name = $name.Trim()
   if ($name -ne '') { $lines += "$id|$name" }
